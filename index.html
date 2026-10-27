@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixie Travels</title>
+  <meta name="description" content="Pixie Travels: itineraries, a closet, shops and a wishlist, all in one sparkly place.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-tab="travels">
+
+  <!-- Pixie dust canvas (cursor trail + bursts) -->
+  <canvas id="dust" aria-hidden="true"></canvas>
+
+  <!-- ========== LOGIN ========== -->
+  <main id="loginView" class="login">
+    <div class="login-card" id="loginCard">
+      <div class="login-mascot" aria-hidden="true">🧚</div>
+      <h1 class="login-title">Pixie Travels</h1>
+      <p class="login-sub">Sign in to open your itineraries, closet, shops and wishlist.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-row">
+            <input id="password" name="password" type="password" autocomplete="current-password">
+            <button type="button" id="togglePassword" class="btn btn-ghost btn-small" aria-pressed="false">Show</button>
+          </div>
+        </div>
+
+        <p id="loginError" class="form-error" role="alert"></p>
+        <button id="loginButton" class="btn btn-primary btn-wide" type="submit">Enter the pixie world</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- ========== APP ========== -->
+  <div id="appView" hidden>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Pixie Travels home">
+        <span class="brand-mark" aria-hidden="true">🧚</span>
+        <span class="brand-name">Pixie Travels</span>
+      </a>
+
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab" role="tab" id="tab-travels" data-tab="travels" aria-controls="panel-travels"><span aria-hidden="true">🗺️</span> Pixie Travels</button>
+        <button class="tab" role="tab" id="tab-closet" data-tab="closet" aria-controls="panel-closet"><span aria-hidden="true">👗</span> Pixie Closet</button>
+        <button class="tab" role="tab" id="tab-shops" data-tab="shops" aria-controls="panel-shops"><span aria-hidden="true">🛍️</span> Pixie Shops</button>
+        <button class="tab" role="tab" id="tab-wishlist" data-tab="wishlist" aria-controls="panel-wishlist"><span aria-hidden="true">💖</span> Wishlist <span class="badge" id="wishlistBadge" hidden>0</span></button>
+      </nav>
+
+      <button id="logoutButton" class="btn btn-ghost btn-small" type="button">Log out</button>
+    </header>
+
+    <main class="shell">
+      <p id="greeting" class="greeting"></p>
+
+      <!-- ===== Travels ===== -->
+      <section class="panel" id="panel-travels" role="tabpanel" data-panel="travels" aria-labelledby="tab-travels">
+        <div class="panel-head">
+          <div>
+            <h2>Travel itineraries</h2>
+            <p>Plan trips, add stops, and tick them off as you go.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-toggle-form="travels" aria-expanded="false" aria-controls="travelsFormWrap">New itinerary</button>
+        </div>
+
+        <div class="form-wrap" id="travelsFormWrap">
+          <div class="form-wrap-inner">
+            <form class="add-form" data-collection="travels" novalidate>
+              <label class="dropzone">
+                <input class="dropzone-input" type="file" accept="image/*">
+                <span class="dropzone-text"><span class="dropzone-icon" aria-hidden="true">📷</span><strong>Add a cover photo</strong><small>Click or drop an image</small></span>
+              </label>
+              <div class="fields">
+                <div class="field"><label for="travels-title">Trip name</label><input id="travels-title" name="title" maxlength="60" placeholder="Cherry blossoms in Kyoto"></div>
+                <div class="field"><label for="travels-destination">Destination</label><input id="travels-destination" name="destination" maxlength="60" placeholder="Kyoto, Japan"></div>
+                <div class="field"><label for="travels-dates">Dates</label><input id="travels-dates" name="dates" maxlength="40" placeholder="Mar 28 to Apr 4"></div>
+                <div class="field field-wide"><label for="travels-notes">Notes</label><textarea id="travels-notes" name="notes" rows="2" maxlength="200" placeholder="Anything you want to remember"></textarea></div>
+                <p class="form-error" role="alert"></p>
+                <div class="form-actions"><button class="btn btn-primary" type="submit">Save itinerary</button><button class="btn btn-ghost" type="reset">Clear</button></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="grid" id="travelsGrid"></div>
+      </section>
+
+      <!-- ===== Closet ===== -->
+      <section class="panel" id="panel-closet" role="tabpanel" data-panel="closet" aria-labelledby="tab-closet" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Pixie closet</h2>
+            <p>Every piece you own, sorted and ready to pack.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-toggle-form="closet" aria-expanded="false" aria-controls="closetFormWrap">Add to closet</button>
+        </div>
+
+        <div class="form-wrap" id="closetFormWrap">
+          <div class="form-wrap-inner">
+            <form class="add-form" data-collection="closet" novalidate>
+              <label class="dropzone">
+                <input class="dropzone-input" type="file" accept="image/*">
+                <span class="dropzone-text"><span class="dropzone-icon" aria-hidden="true">📷</span><strong>Add a photo</strong><small>Click or drop an image</small></span>
+              </label>
+              <div class="fields">
+                <div class="field"><label for="closet-title">Item name</label><input id="closet-title" name="title" maxlength="60" placeholder="Lilac pleated midi"></div>
+                <div class="field"><label for="closet-category">Category</label><select id="closet-category" name="category" data-options="closet"></select></div>
+                <div class="field"><label for="closet-color">Colour</label><input id="closet-color" name="color" maxlength="30" placeholder="Lilac"></div>
+                <div class="field field-wide"><label for="closet-notes">Notes</label><textarea id="closet-notes" name="notes" rows="2" maxlength="200" placeholder="Fabric, fit, outfit ideas"></textarea></div>
+                <p class="form-error" role="alert"></p>
+                <div class="form-actions"><button class="btn btn-primary" type="submit">Save item</button><button class="btn btn-ghost" type="reset">Clear</button></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="toolbar" id="closetFilters" role="group" aria-label="Filter closet"></div>
+        <div class="grid" id="closetGrid"></div>
+      </section>
+
+      <!-- ===== Shops ===== -->
+      <section class="panel" id="panel-shops" role="tabpanel" data-panel="shops" aria-labelledby="tab-shops" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Pixie shops</h2>
+            <p>Your favourite places to shop. Save finds straight to your wishlist.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-toggle-form="shops" aria-expanded="false" aria-controls="shopsFormWrap">Add a shop</button>
+        </div>
+
+        <div class="form-wrap" id="shopsFormWrap">
+          <div class="form-wrap-inner">
+            <form class="add-form" data-collection="shops" novalidate>
+              <label class="dropzone">
+                <input class="dropzone-input" type="file" accept="image/*">
+                <span class="dropzone-text"><span class="dropzone-icon" aria-hidden="true">📷</span><strong>Add a logo or photo</strong><small>Click or drop an image</small></span>
+              </label>
+              <div class="fields">
+                <div class="field"><label for="shops-title">Shop name</label><input id="shops-title" name="title" maxlength="60" placeholder="Petal and Thread"></div>
+                <div class="field"><label for="shops-category">Category</label><select id="shops-category" name="category" data-options="shops"></select></div>
+                <div class="field"><label for="shops-link">Website</label><input id="shops-link" name="link" maxlength="200" placeholder="example.com"></div>
+                <div class="field field-wide"><label for="shops-notes">Notes</label><textarea id="shops-notes" name="notes" rows="2" maxlength="200" placeholder="What to look for here"></textarea></div>
+                <p class="form-error" role="alert"></p>
+                <div class="form-actions"><button class="btn btn-primary" type="submit">Save shop</button><button class="btn btn-ghost" type="reset">Clear</button></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="grid" id="shopsGrid"></div>
+      </section>
+
+      <!-- ===== Wishlist ===== -->
+      <section class="panel" id="panel-wishlist" role="tabpanel" data-panel="wishlist" aria-labelledby="tab-wishlist" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Wishlist</h2>
+            <p id="wishlistSummary">Everything you’re hoping to get.</p>
+          </div>
+          <button class="btn btn-primary" type="button" data-toggle-form="wishlist" aria-expanded="false" aria-controls="wishlistFormWrap">Make a wish</button>
+        </div>
+
+        <div class="form-wrap" id="wishlistFormWrap">
+          <div class="form-wrap-inner">
+            <form class="add-form" data-collection="wishlist" novalidate>
+              <label class="dropzone">
+                <input class="dropzone-input" type="file" accept="image/*">
+                <span class="dropzone-text"><span class="dropzone-icon" aria-hidden="true">📷</span><strong>Add a photo</strong><small>Click or drop an image</small></span>
+              </label>
+              <div class="fields">
+                <div class="field"><label for="wishlist-title">What do you want?</label><input id="wishlist-title" name="title" maxlength="60" placeholder="Pearl hair clips"></div>
+                <div class="field"><label for="wishlist-price">Price</label><input id="wishlist-price" name="price" maxlength="20" placeholder="$18"></div>
+                <div class="field"><label for="wishlist-priority">Priority</label><select id="wishlist-priority" name="priority" data-options="priority"></select></div>
+                <div class="field"><label for="wishlist-link">Link</label><input id="wishlist-link" name="link" maxlength="200" placeholder="example.com/product"></div>
+                <div class="field field-wide"><label for="wishlist-notes">Notes</label><textarea id="wishlist-notes" name="notes" rows="2" maxlength="200" placeholder="Size, colour, where to buy"></textarea></div>
+                <p class="form-error" role="alert"></p>
+                <div class="form-actions"><button class="btn btn-primary" type="submit">Save wish</button><button class="btn btn-ghost" type="reset">Clear</button></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="grid" id="wishlistGrid"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Made with pixie dust by Pravalika</span>
+      <button class="link-btn" type="button" id="resetData">Reset sample data</button>
+    </footer>
+  </div>
+
+  <!-- Shared input used when changing a card's thumbnail -->
+  <input type="file" id="cardImageInput" accept="image/*" hidden>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
