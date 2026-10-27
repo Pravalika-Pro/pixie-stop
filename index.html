@@ -1,1 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixie Travels</title>
+<meta name="description" content="Plan trips, keep your closet, save shops and make wishes, all in one sparkly place.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   Pixie Travels – styles
+   ========================================================== */
+:root {
+  --ink: #2b1b4d;
+  --ink-soft: #5f4f82;
+  --bg: #f4eeff;
+  --surface: #ffffff;
+  --line: #e1d5fa;
+  --lilac: #7d4fe0;
+  --lilac-soft: #ebe2ff;
+  --rose-soft: #ffe0ee;
+  --mint-soft: #d6f6ea;
+  --peach-soft: #ffeccb;
+  --danger: #b3261e;
+  --accent: #6a3fd0;
+  --accent-ink: #ffffff;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 1px 2px rgba(43, 27, 77, .06), 0 8px 24px -12px rgba(43, 27, 77, .22);
+  --font-display: 'Fredoka', 'Trebuchet MS', 'Segoe UI Rounded', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+body[data-tab="travels"]  { --accent: #6a3fd0; }
+body[data-tab="closet"]   { --accent: #c52a72; }
+body[data-tab="shops"]    { --accent: #0e8663; }
+body[data-tab="wishlist"] { --accent: #a35c00; }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, #ffd9ec 0%, transparent 60%),
+    radial-gradient(50rem 28rem at -10% 0%, #d9ccff 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; margin: 0; }
+p { margin: 0; }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+:focus-visible { outline: 3px solid var(--lilac); outline-offset: 2px; border-radius: 6px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+#dust { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  min-height: 44px; padding: .6rem 1.15rem;
+  border: 2px solid transparent; border-radius: 999px;
+  font-weight: 600; text-decoration: none;
+  transition: transform .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--accent); }
+.btn-small { min-height: 38px; padding: .4rem .9rem; font-size: .92rem; }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+.link-btn {
+  background: none; border: 0; padding: .35rem .1rem; min-height: 32px;
+  color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
+}
+.icon-btn {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  border: 0; background: transparent; color: var(--ink-soft); font-size: 1.25rem; line-height: 1;
+}
+.icon-btn:hover { background: var(--rose-soft); color: var(--danger); }
+
+/* ---------- Login ---------- */
+.login-view {
+  min-height: 100vh; display: grid; place-items: center; padding: 1.5rem;
+}
+.login-card {
+  width: 100%; max-width: 400px;
+  background: var(--surface); border-radius: 28px; padding: 2rem 1.75rem 1.75rem;
+  box-shadow: var(--shadow); border: 2px solid var(--line);
+}
+.login-card.is-shaking { animation: shake .45s ease; }
+@keyframes shake {
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+.login-mark {
+  width: 64px; height: 64px; border-radius: 20px; margin-bottom: 1rem;
+  display: grid; place-items: center; font-size: 2rem;
+  background: var(--lilac-soft); transform: rotate(-6deg);
+  animation: bob 4s ease-in-out infinite;
+}
+@keyframes bob { 50% { transform: rotate(4deg) translateY(-4px); } }
+.login-card h1 { font-size: 2.1rem; color: var(--lilac); }
+.login-card .lede { margin: .35rem 0 1.4rem; color: var(--ink-soft); }
+
+.field { display: grid; gap: .3rem; margin-bottom: 1rem; text-align: left; }
+.field > span { font-weight: 600; font-size: .92rem; }
+.field input, .field select, .field textarea {
+  width: 100%; min-height: 46px; padding: .6rem .85rem;
+  background: #fbf9ff; border: 2px solid var(--line); border-radius: var(--radius-sm);
+}
+.field textarea { min-height: 84px; resize: vertical; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--lilac); box-shadow: 0 0 0 4px rgba(125, 79, 224, .18);
+}
+.password-row { position: relative; display: block; }
+.password-row input { padding-right: 4.5rem; }
+.password-row .reveal {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  min-height: 34px; padding: 0 .75rem; border: 0; border-radius: 999px;
+  background: var(--lilac-soft); color: var(--lilac); font-weight: 600; font-size: .85rem;
+}
+.error-text { min-height: 1.4em; margin: -.25rem 0 .75rem; color: var(--danger); font-size: .92rem; font-weight: 500; }
+.login-card .btn { width: 100%; background: var(--lilac); color: #fff; }
+
+/* ---------- App shell ---------- */
+.shell { max-width: 1120px; margin: 0 auto; padding: 1.25rem 1.1rem 3rem; }
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: .5rem 0 1.25rem;
+}
+.brand { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--lilac); }
+.topbar h1 { font-size: clamp(1.6rem, 4.5vw, 2.4rem); }
+
+.tabs {
+  display: flex; gap: .4rem; overflow-x: auto; padding: .35rem;
+  background: var(--surface); border: 2px solid var(--line); border-radius: 999px;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 44px; padding: .4rem 1rem; border: 0; border-radius: 999px;
+  background: transparent; font-weight: 600; color: var(--ink-soft); white-space: nowrap;
+  transition: background-color .2s ease, color .2s ease;
+}
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+.badge {
+  min-width: 22px; height: 22px; padding: 0 .4rem; border-radius: 999px;
+  display: inline-grid; place-items: center; font-size: .78rem; font-weight: 700;
+  background: var(--rose-soft); color: #8a1650;
+}
+
+.panel { padding-top: 1.75rem; }
+.panel-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.panel-head h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); }
+.panel-head p { color: var(--ink-soft); margin-top: .25rem; max-width: 46ch; }
+
+/* ---------- Add forms ---------- */
+.form-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+.form-wrap.is-open { grid-template-rows: 1fr; }
+.form-inner { min-height: 0; overflow: hidden; visibility: hidden; transition: visibility 0s .35s; }
+.form-wrap.is-open .form-inner { visibility: visible; transition-delay: 0s; }
+
+.add-form {
+  margin-bottom: 1.5rem; padding: 1.25rem;
+  background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius);
+}
+.form-grid { display: grid; gap: 0 1rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.field-wide { grid-column: 1 / -1; }
+
+.dropzone {
+  position: relative; display: grid; place-items: center; text-align: center; gap: .15rem;
+  min-height: 140px; margin-bottom: 1rem; padding: 1rem; overflow: hidden;
+  border: 2px dashed var(--accent); border-radius: var(--radius-sm);
+  background: #fbf9ff; color: var(--ink-soft); cursor: pointer;
+  transition: background-color .15s ease;
+}
+.dropzone:hover, .dropzone.is-drag { background: var(--lilac-soft); }
+.dropzone:focus-within { outline: 3px solid var(--lilac); outline-offset: 2px; }
+.dropzone strong { color: var(--ink); }
+.dropzone-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.dropzone-preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.form-actions { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.form-error { min-height: 1.4em; margin-bottom: .6rem; color: var(--danger); font-weight: 500; font-size: .92rem; }
+
+/* ---------- Filters ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+.chip-btn {
+  min-height: 38px; padding: .3rem .95rem; border-radius: 999px;
+  background: var(--surface); border: 2px solid var(--line); font-weight: 600; font-size: .92rem;
+}
+.chip-btn:hover { border-color: var(--accent); }
+.chip-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+/* ---------- Cards ---------- */
+.grid { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+
+.card {
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.card.is-done { opacity: .72; }
+.card.is-done h3 { text-decoration: line-through; text-decoration-thickness: 2px; }
+
+.thumb {
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; padding: 0;
+  border: 0; border-bottom: 2px solid var(--line); background: var(--lilac-soft); overflow: hidden;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-empty { display: grid; place-items: center; align-content: center; height: 100%; gap: .2rem; font-size: 2.4rem; color: var(--ink-soft); }
+.thumb-empty small { font-size: .85rem; font-weight: 600; }
+.thumb-edit {
+  position: absolute; right: .6rem; bottom: .6rem; padding: .25rem .7rem; border-radius: 999px;
+  background: rgba(43, 27, 77, .85); color: #fff; font-size: .8rem; font-weight: 600;
+  opacity: 0; transition: opacity .15s ease;
+}
+.thumb:hover .thumb-edit, .thumb:focus-visible .thumb-edit { opacity: 1; }
+@media (hover: none) { .thumb-edit { opacity: 1; } }
+
+.fav {
+  position: absolute; top: .6rem; right: .6rem; width: 44px; height: 44px;
+  border: 0; border-radius: 50%; background: rgba(255, 255, 255, .92); font-size: 1.3rem;
+  box-shadow: 0 2px 8px rgba(43, 27, 77, .2);
+  transition: transform .15s ease;
+}
+.fav:hover { transform: scale(1.08); }
+
+.card-body { display: grid; gap: .6rem; align-content: start; padding: 1rem 1rem .6rem; flex: 1; }
+.card-body h3 { font-size: 1.25rem; overflow-wrap: anywhere; }
+.notes { color: var(--ink-soft); font-size: .95rem; overflow-wrap: anywhere; }
+.card-actions {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap;
+  padding: .5rem 1rem 1rem;
+}
+.card-link { color: var(--accent); font-weight: 600; text-underline-offset: 3px; width: fit-content; }
+
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.chip { padding: .15rem .7rem; border-radius: 999px; font-size: .85rem; font-weight: 600; background: var(--lilac-soft); color: #43238c; }
+.chip-lilac { background: var(--lilac-soft); color: #43238c; }
+.chip-rose  { background: var(--rose-soft); color: #8a1650; }
+.chip-mint  { background: var(--mint-soft); color: #0a5c43; }
+.chip-peach { background: var(--peach-soft); color: #7a4600; }
+
+/* Trip progress + stops */
+.progress { height: 10px; border-radius: 999px; background: var(--lilac-soft); overflow: hidden; }
+.progress span { display: block; height: 100%; width: var(--pct, 0%); background: var(--accent); border-radius: inherit; transition: width .35s ease; }
+.progress-label { font-size: .85rem; color: var(--ink-soft); margin-top: -.25rem; }
+
+.stops { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; }
+.stops li { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.check { display: flex; align-items: center; gap: .6rem; min-height: 40px; flex: 1; cursor: pointer; overflow-wrap: anywhere; }
+.check input { width: 20px; height: 20px; flex: none; accent-color: var(--accent); }
+.check input:checked + span { text-decoration: line-through; color: var(--ink-soft); }
+
+.stop-form { display: flex; gap: .5rem; }
+.stop-form input {
+  flex: 1; min-width: 0; min-height: 40px; padding: .4rem .8rem;
+  background: #fbf9ff; border: 2px solid var(--line); border-radius: 999px;
+}
+.stop-form input:focus { outline: none; border-color: var(--lilac); box-shadow: 0 0 0 4px rgba(125, 79, 224, .18); }
+
+/* ---------- Empty state ---------- */
+.empty {
+  grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem;
+  background: var(--surface); border: 2px dashed var(--line); border-radius: var(--radius);
+}
+.empty-icon { font-size: 2.6rem; display: block; margin-bottom: .5rem; }
+.empty h3 { font-size: 1.3rem; }
+.empty p { color: var(--ink-soft); margin-top: .25rem; }
+
+/* ---------- Footer + toast ---------- */
+.app-footer {
+  margin-top: 3rem; padding-top: 1.25rem; border-top: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  color: var(--ink-soft); font-size: .92rem;
+}
+
+.toast {
+  position: fixed; left: 50%; bottom: 1.25rem; z-index: 70;
+  max-width: min(92vw, 420px); padding: .75rem 1.25rem; border-radius: 999px;
+  background: var(--ink); color: #fff; font-weight: 500; text-align: center;
+  transform: translate(-50%, 140%); opacity: 0; pointer-events: none;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.toast.is-visible { transform: translate(-50%, 0); opacity: 1; }
+
+@media (max-width: 520px) {
+  .shell { padding-inline: .8rem; }
+  .login-card { padding: 1.5rem 1.25rem; }
+  .grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+}
+</style>
+</head>
+<body data-tab="travels">
+
+<canvas id="dust" aria-hidden="true"></canvas>
+
+<!-- ============ Login ============ -->
+<main id="loginView" class="login-view">
+  <section id="loginCard" class="login-card" aria-labelledby="loginTitle">
+    <div class="login-mark" aria-hidden="true">✨</div>
+    <h1 id="loginTitle">Pixie Travels</h1>
+    <p class="lede">Sign in to open your trips, closet, shops and wishlist.</p>
+
+    <form id="loginForm" novalidate>
+      <label class="field">
+        <span>Username</span>
+        <input id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+      </label>
+      <label class="field" for="password">
+        <span>Password</span>
+        <span class="password-row">
+          <input id="password" name="password" type="password" autocomplete="current-password">
+          <button id="togglePassword" class="reveal" type="button" aria-pressed="false" aria-controls="password">Show</button>
+        </span>
+      </label>
+      <p id="loginError" class="error-text" role="alert" aria-live="assertive"></p>
+      <button id="loginButton" class="btn" type="submit">Sign in</button>
+    </form>
+  </section>
+</main>
+
+<!-- ============ App ============ -->
+<div id="appView" class="shell" hidden>
+  <header class="topbar">
+    <div>
+      <p class="brand">Pixie Travels</p>
+      <h1 id="greeting">Hello ✨</h1>
+    </div>
+    <button id="logoutButton" class="btn btn-ghost btn-small" type="button">Sign out</button>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab" role="tab" type="button" data-tab="travels" aria-selected="true"><span aria-hidden="true">🗺️</span> Pixie Travels</button>
+    <button class="tab" role="tab" type="button" data-tab="closet" aria-selected="false"><span aria-hidden="true">👗</span> Pixie Closet</button>
+    <button class="tab" role="tab" type="button" data-tab="shops" aria-selected="false"><span aria-hidden="true">🛍️</span> Pixie Shops</button>
+    <button class="tab" role="tab" type="button" data-tab="wishlist" aria-selected="false"><span aria-hidden="true">💖</span> Pixie Wishlist <span id="wishlistBadge" class="badge" hidden>0</span></button>
+  </nav>
+
+  <!-- Travels -->
+  <section class="panel" role="tabpanel" data-panel="travels">
+    <div class="panel-head">
+      <div>
+        <h2>Itineraries</h2>
+        <p>Plan each trip and tick off stops as you go.</p>
+      </div>
+      <button class="btn btn-primary" type="button" data-toggle-form="travels" aria-expanded="false" aria-controls="travelsFormWrap">New itinerary</button>
+    </div>
+    <div id="travelsFormWrap" class="form-wrap">
+      <div class="form-inner">
+        <form class="add-form" data-collection="travels" novalidate>
+          <label class="dropzone">
+            <input class="dropzone-input" type="file" accept="image/*">
+            <strong>Add a cover photo</strong>
+            <span>Click to choose, or drop an image here</span>
+          </label>
+          <div class="form-grid">
+            <label class="field"><span>Trip name</span><input name="title" maxlength="60" placeholder="Cherry blossoms in Kyoto"></label>
+            <label class="field"><span>Destination</span><input name="destination" maxlength="60" placeholder="Kyoto, Japan"></label>
+            <label class="field"><span>Dates</span><input name="dates" maxlength="40" placeholder="Mar 28 to Apr 4"></label>
+            <label class="field field-wide"><span>Notes</span><textarea name="notes" maxlength="240" placeholder="Packing list, reminders, ideas"></textarea></label>
+          </div>
+          <p class="form-error" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save itinerary</button>
+            <button class="btn btn-ghost" type="reset">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="travelsGrid" class="grid"></div>
+  </section>
+
+  <!-- Closet -->
+  <section class="panel" role="tabpanel" data-panel="closet" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Closet</h2>
+        <p>Every piece you own, sorted and ready to pack.</p>
+      </div>
+      <button class="btn btn-primary" type="button" data-toggle-form="closet" aria-expanded="false" aria-controls="closetFormWrap">Add to closet</button>
+    </div>
+    <div id="closetFormWrap" class="form-wrap">
+      <div class="form-inner">
+        <form class="add-form" data-collection="closet" novalidate>
+          <label class="dropzone">
+            <input class="dropzone-input" type="file" accept="image/*">
+            <strong>Add a photo</strong>
+            <span>Click to choose, or drop an image here</span>
+          </label>
+          <div class="form-grid">
+            <label class="field"><span>Name</span><input name="title" maxlength="60" placeholder="Lilac pleated midi"></label>
+            <label class="field"><span>Category</span><select name="category" data-options="closet"></select></label>
+            <label class="field"><span>Colour</span><input name="color" maxlength="30" placeholder="Lilac"></label>
+            <label class="field field-wide"><span>Notes</span><textarea name="notes" maxlength="240" placeholder="Fabric, fit, styling ideas"></textarea></label>
+          </div>
+          <p class="form-error" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save piece</button>
+            <button class="btn btn-ghost" type="reset">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="closetFilters" class="filters" role="group" aria-label="Filter closet"></div>
+    <div id="closetGrid" class="grid"></div>
+  </section>
+
+  <!-- Shops -->
+  <section class="panel" role="tabpanel" data-panel="shops" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Shops</h2>
+        <p>Your favourite places to browse, with links ready to open.</p>
+      </div>
+      <button class="btn btn-primary" type="button" data-toggle-form="shops" aria-expanded="false" aria-controls="shopsFormWrap">Add a shop</button>
+    </div>
+    <div id="shopsFormWrap" class="form-wrap">
+      <div class="form-inner">
+        <form class="add-form" data-collection="shops" novalidate>
+          <label class="dropzone">
+            <input class="dropzone-input" type="file" accept="image/*">
+            <strong>Add a logo or photo</strong>
+            <span>Click to choose, or drop an image here</span>
+          </label>
+          <div class="form-grid">
+            <label class="field"><span>Shop name</span><input name="title" maxlength="60" placeholder="Petal and Thread"></label>
+            <label class="field"><span>Category</span><select name="category" data-options="shops"></select></label>
+            <label class="field"><span>Website</span><input name="link" type="text" inputmode="url" maxlength="200" placeholder="example.com"></label>
+            <label class="field field-wide"><span>Notes</span><textarea name="notes" maxlength="240" placeholder="What you love about it"></textarea></label>
+          </div>
+          <p class="form-error" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save shop</button>
+            <button class="btn btn-ghost" type="reset">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="shopsGrid" class="grid"></div>
+  </section>
+
+  <!-- Wishlist -->
+  <section class="panel" role="tabpanel" data-panel="wishlist" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Wishlist</h2>
+        <p id="wishlistSummary">Everything you’re hoping to get.</p>
+      </div>
+      <button class="btn btn-primary" type="button" data-toggle-form="wishlist" aria-expanded="false" aria-controls="wishlistFormWrap">Make a wish</button>
+    </div>
+    <div id="wishlistFormWrap" class="form-wrap">
+      <div class="form-inner">
+        <form class="add-form" data-collection="wishlist" novalidate>
+          <label class="dropzone">
+            <input class="dropzone-input" type="file" accept="image/*">
+            <strong>Add a photo</strong>
+            <span>Click to choose, or drop an image here</span>
+          </label>
+          <div class="form-grid">
+            <label class="field"><span>Item</span><input name="title" maxlength="60" placeholder="Pearl hair clips"></label>
+            <label class="field"><span>Price</span><input name="price" maxlength="20" placeholder="$18"></label>
+            <label class="field"><span>Priority</span><select name="priority" data-options="priority"></select></label>
+            <label class="field"><span>Link</span><input name="link" type="text" inputmode="url" maxlength="200" placeholder="example.com/item"></label>
+            <label class="field field-wide"><span>Notes</span><textarea name="notes" maxlength="240" placeholder="Size, colour, where to buy"></textarea></label>
+          </div>
+          <p class="form-error" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save wish</button>
+            <button class="btn btn-ghost" type="reset">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="wishlistGrid" class="grid"></div>
+  </section>
+
+  <footer class="app-footer">
+    <p>Saved in this browser only.</p>
+    <button id="resetData" class="link-btn" type="button">Restore sample data</button>
+  </footer>
+</div>
+
+<input id="cardImageInput" class="sr-only" type="file" accept="image/*" tabindex="-1" aria-hidden="true">
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+
+/* ==========================================================
+   Pixie Travels – app logic
+   All conditional logic lives here. Styling lives in styles.css.
+   NOTE: The login is a front-end gate only. Anyone can read these
+   credentials in the page source, so don't reuse a real password.
+   ========================================================== */
+
+const CREDENTIALS = { username: 'pravalika', password: 'proversion@45' };
+const STORAGE_KEY = 'pixie-world-v1';
+const SESSION_KEY = 'pixie-session-v1';
+const TAB_KEY = 'pixie-tab-v1';
+const MAX_ATTEMPTS = 5;
+const LOCK_SECONDS = 30;
+const MAX_STOPS = 40;
+const THUMB_MAX_SIZE = 480;
+
+const OPTIONS = {
+  closet: ['Dresses', 'Tops', 'Bottoms', 'Shoes', 'Accessories', 'Outerwear'],
+  shops: ['Fashion', 'Beauty', 'Home', 'Travel gear', 'Other'],
+  priority: ['Dream', 'Soon', 'Someday']
+};
+
+const SECTIONS = {
+  travels: {
+    emoji: '🗺️',
+    emptyTitle: 'No trips yet',
+    emptyText: 'Choose “New itinerary” to plan your first adventure.'
+  },
+  closet: {
+    emoji: '👗',
+    emptyTitle: 'Nothing here yet',
+    emptyText: 'Choose “Add to closet” to upload your first piece.'
+  },
+  shops: {
+    emoji: '🛍️',
+    emptyTitle: 'No shops saved',
+    emptyText: 'Choose “Add a shop” to start your list.'
+  },
+  wishlist: {
+    emoji: '💖',
+    emptyTitle: 'Your wishlist is empty',
+    emptyText: 'Choose “Make a wish”, or save a find from Pixie Shops.'
+  }
+};
+
+const TAB_ORDER = ['travels', 'closet', 'shops', 'wishlist'];
+
+/* Sample data. To show your own photos to every visitor, put images in the
+   /images folder and set image: 'images/your-photo.jpg' on an item below. */
+function seedData() {
+  const now = Date.now();
+  return {
+    travels: [
+      {
+        id: uid(), title: 'Cherry blossoms in Kyoto', destination: 'Kyoto, Japan', dates: 'Mar 28 to Apr 4',
+        notes: 'Pack the pink trench and comfy walking shoes.', image: '', created: now,
+        stops: [
+          { id: uid(), text: 'Fushimi Inari at sunrise', done: true },
+          { id: uid(), text: 'Philosopher’s Path walk', done: false },
+          { id: uid(), text: 'Tea ceremony in Gion', done: false }
+        ]
+      },
+      {
+        id: uid(), title: 'Lavender weekend', destination: 'Provence, France', dates: 'Jun 20 to Jun 22',
+        notes: 'Golden hour photos in the fields.', image: '', created: now - 1,
+        stops: [
+          { id: uid(), text: 'Sénanque Abbey', done: false },
+          { id: uid(), text: 'Valensole lavender fields', done: false }
+        ]
+      }
+    ],
+    closet: [
+      { id: uid(), title: 'Lilac pleated midi', category: 'Dresses', color: 'Lilac', notes: 'Twirls beautifully.', image: '', fav: true, created: now },
+      { id: uid(), title: 'Mint linen shirt', category: 'Tops', color: 'Mint', notes: 'Great for warm trips.', image: '', fav: false, created: now - 1 },
+      { id: uid(), title: 'Silver ballet flats', category: 'Shoes', color: 'Silver', notes: '', image: '', fav: false, created: now - 2 },
+      { id: uid(), title: 'Star charm necklace', category: 'Accessories', color: 'Gold', notes: 'Goes with everything.', image: '', fav: true, created: now - 3 }
+    ],
+    shops: [
+      { id: uid(), title: 'Petal and Thread', category: 'Fashion', link: '', notes: 'Soft dresses and linen sets.', image: '', created: now },
+      { id: uid(), title: 'Moonbeam Beauty', category: 'Beauty', link: '', notes: 'Shimmer highlighters.', image: '', created: now - 1 },
+      { id: uid(), title: 'Wanderpack Co.', category: 'Travel gear', link: '', notes: 'Pastel luggage and packing cubes.', image: '', created: now - 2 }
+    ],
+    wishlist: [
+      { id: uid(), title: 'Pearl hair clips', price: '$18', priority: 'Soon', link: '', notes: 'Set of six.', image: '', bought: false, created: now },
+      { id: uid(), title: 'Pastel carry-on', price: '$140', priority: 'Dream', link: '', notes: 'Mint or lilac.', image: '', bought: false, created: now - 1 },
+      { id: uid(), title: 'Film camera', price: '$95', priority: 'Someday', link: '', notes: 'For trip photos.', image: '', bought: false, created: now - 2 }
+    ]
+  };
+}
+
+/* ---------- Helpers ---------- */
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+function safeUrl(raw) {
+  const value = String(raw || '').trim();
+  if (!value) return '';
+  const withScheme = /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : 'https://' + value;
+  try {
+    const url = new URL(withScheme);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function safeImage(src) {
+  if (typeof src !== 'string' || !src) return '';
+  const isUpload = /^data:image\/(jpeg|png|webp|gif);base64,/.test(src);
+  const isRepoImage = /^images\/[\w\-./ ]+$/.test(src) && !src.includes('..');
+  return isUpload || isRepoImage ? src : '';
+}
+
+function capitalise(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/* ---------- State ---------- */
+const ui = {
+  tab: 'travels',
+  closetFilter: 'All',
+  expanded: new Set(),
+  pendingImages: { travels: '', closet: '', shops: '', wishlist: '' },
+  imageTarget: null,
+  attempts: 0,
+  lockUntil: 0,
+  lockTimer: 0,
+  toastTimer: 0
+};
+
+let data = loadData();
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return seedData();
+    const parsed = JSON.parse(raw);
+    const valid = TAB_ORDER.every(key => Array.isArray(parsed[key]));
+    return valid ? parsed : seedData();
+  } catch {
+    return seedData();
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch {
+    toast('Your browser storage is full. Remove a few photos and try again.');
+    return false;
+  }
+}
+
+/* ==========================================================
+   Pixie dust canvas
+   ========================================================== */
+const canvas = $('#dust');
+const ctx = canvas.getContext('2d');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DUST_COLORS = ['#7d4fe0', '#ff7db4', '#35c99b', '#ffb52e', '#a98bff'];
+let particles = [];
+let dustFrame = 0;
+let lastDust = { x: -100, y: -100 };
+
+function resizeCanvas() {
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.round(window.innerWidth * ratio);
+  canvas.height = Math.round(window.innerHeight * ratio);
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function spawnDust(x, y, count, speed) {
+  if (reduceMotion) return;
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * speed,
+      vy: (Math.random() - 0.9) * speed,
+      life: 1,
+      decay: 0.012 + Math.random() * 0.018,
+      size: 3 + Math.random() * 6,
+      color: DUST_COLORS[Math.floor(Math.random() * DUST_COLORS.length)]
+    });
+  }
+  if (!dustFrame) dustFrame = requestAnimationFrame(tickDust);
+}
+
+function drawSparkle(x, y, r) {
+  ctx.beginPath();
+  ctx.moveTo(x, y - r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.quadraticCurveTo(x, y, x, y + r);
+  ctx.quadraticCurveTo(x, y, x - r, y);
+  ctx.quadraticCurveTo(x, y, x, y - r);
+  ctx.fill();
+}
+
+function tickDust() {
+  ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.05;
+    p.life -= p.decay;
+    ctx.globalAlpha = Math.max(p.life, 0);
+    ctx.fillStyle = p.color;
+    drawSparkle(p.x, p.y, p.size * Math.max(p.life, 0.2));
+  });
+  ctx.globalAlpha = 1;
+  dustFrame = particles.length ? requestAnimationFrame(tickDust) : 0;
+  if (!particles.length) ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+}
+
+function bindDust() {
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  window.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+    const moved = Math.hypot(event.clientX - lastDust.x, event.clientY - lastDust.y);
+    if (moved < 14) return;
+    lastDust = { x: event.clientX, y: event.clientY };
+    spawnDust(event.clientX, event.clientY, 1, 1.6);
+  });
+}
+
+/* ==========================================================
+   Toast
+   ========================================================== */
+function toast(message) {
+  const el = $('#toast');
+  el.textContent = message;
+  el.classList.add('is-visible');
+  clearTimeout(ui.toastTimer);
+  ui.toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2800);
+}
+
+/* ==========================================================
+   Login / logout
+   ========================================================== */
+const loginView = $('#loginView');
+const appView = $('#appView');
+const loginForm = $('#loginForm');
+const loginError = $('#loginError');
+const loginButton = $('#loginButton');
+
+function showLoginError(message) {
+  loginError.textContent = message;
+}
+
+function shakeLoginCard() {
+  const card = $('#loginCard');
+  card.classList.remove('is-shaking');
+  void card.offsetWidth; // restart the animation
+  card.classList.add('is-shaking');
+}
+
+function startLock() {
+  ui.lockUntil = Date.now() + LOCK_SECONDS * 1000;
+  loginButton.disabled = true;
+
+  const update = () => {
+    const remaining = Math.ceil((ui.lockUntil - Date.now()) / 1000);
+    if (remaining <= 0) {
+      clearInterval(ui.lockTimer);
+      ui.attempts = 0;
+      loginButton.disabled = false;
+      showLoginError('');
+      return;
+    }
+    showLoginError(`Too many tries. Please wait ${remaining}s and try again.`);
+  };
+
+  clearInterval(ui.lockTimer);
+  update();
+  ui.lockTimer = setInterval(update, 1000);
+}
+
+function handleLogin() {
+  if (Date.now() < ui.lockUntil) return;
+
+  const username = $('#username').value.trim().toLowerCase();
+  const password = $('#password').value;
+
+  if (!username || !password) {
+    showLoginError('Enter both your username and password.');
+    shakeLoginCard();
+    return;
+  }
+
+  if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+    ui.attempts = 0;
+    showLoginError('');
+    sessionStorage.setItem(SESSION_KEY, '1');
+    const rect = $('#loginCard').getBoundingClientRect();
+    spawnDust(rect.left + rect.width / 2, rect.top + 60, 45, 9);
+    setTimeout(() => enterApp(), reduceMotion ? 0 : 450);
+    return;
+  }
+
+  ui.attempts += 1;
+  shakeLoginCard();
+  $('#password').value = '';
+
+  if (ui.attempts >= MAX_ATTEMPTS) {
+    startLock();
+  } else {
+    const left = MAX_ATTEMPTS - ui.attempts;
+    showLoginError(`That username or password doesn’t match. ${left} ${left === 1 ? 'try' : 'tries'} left.`);
+  }
+}
+
+function greetingText() {
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  return `${part}, ${capitalise(CREDENTIALS.username)} ✨`;
+}
+
+function enterApp() {
+  loginView.hidden = true;
+  appView.hidden = false;
+  $('#greeting').textContent = greetingText();
+  const savedTab = sessionStorage.getItem(TAB_KEY);
+  setTab(TAB_ORDER.includes(savedTab) ? savedTab : 'travels');
+  renderAll();
+  window.scrollTo(0, 0);
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  appView.hidden = true;
+  loginView.hidden = false;
+  $('#username').value = '';
+  $('#password').value = '';
+  $('#password').type = 'password';
+  $('#togglePassword').textContent = 'Show';
+  $('#togglePassword').setAttribute('aria-pressed', 'false');
+  showLoginError('');
+  $('#username').focus();
+}
+
+function togglePassword() {
+  const input = $('#password');
+  const button = $('#togglePassword');
+  const reveal = input.type === 'password';
+  input.type = reveal ? 'text' : 'password';
+  button.textContent = reveal ? 'Hide' : 'Show';
+  button.setAttribute('aria-pressed', String(reveal));
+}
+
+/* ==========================================================
+   Tabs
+   ========================================================== */
+function setTab(name, moveFocus = false) {
+  if (!TAB_ORDER.includes(name)) name = 'travels';
+  ui.tab = name;
+  document.body.dataset.tab = name;
+  sessionStorage.setItem(TAB_KEY, name);
+
+  $$('.tab').forEach(tab => {
+    const active = tab.dataset.tab === name;
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+    if (active && moveFocus) tab.focus();
+  });
+
+  $$('.panel').forEach(panel => {
+    panel.hidden = panel.dataset.panel !== name;
+  });
+}
+
+function handleTabKeys(event) {
+  const index = TAB_ORDER.indexOf(ui.tab);
+  let next = -1;
+  if (event.key === 'ArrowRight') next = (index + 1) % TAB_ORDER.length;
+  if (event.key === 'ArrowLeft') next = (index - 1 + TAB_ORDER.length) % TAB_ORDER.length;
+  if (event.key === 'Home') next = 0;
+  if (event.key === 'End') next = TAB_ORDER.length - 1;
+  if (next === -1) return;
+  event.preventDefault();
+  setTab(TAB_ORDER[next], true);
+}
+
+/* ==========================================================
+   Image handling
+   ========================================================== */
+function fileToThumbnail(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      reject(new Error('Please choose an image file.'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('That file could not be read.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('That image could not be opened.'));
+      img.onload = () => {
+        const scale = Math.min(1, THUMB_MAX_SIZE / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const work = document.createElement('canvas');
+        work.width = width;
+        work.height = height;
+        work.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(work.toDataURL('image/jpeg', 0.8));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function setDropzonePreview(zone, src) {
+  const existing = $('.dropzone-preview-img', zone);
+  if (existing) existing.remove();
+  zone.classList.toggle('has-image', Boolean(src));
+  if (!src) return;
+  const img = document.createElement('img');
+  img.className = 'dropzone-preview-img';
+  img.alt = 'Selected thumbnail preview';
+  img.src = src;
+  zone.appendChild(img);
+}
+
+async function handleFormImage(zone, file) {
+  const form = zone.closest('.add-form');
+  const collection = form.dataset.collection;
+  try {
+    const src = await fileToThumbnail(file);
+    ui.pendingImages[collection] = src;
+    setDropzonePreview(zone, src);
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+async function handleCardImage(file) {
+  const target = ui.imageTarget;
+  ui.imageTarget = null;
+  if (!target) return;
+  const item = data[target.collection].find(entry => entry.id === target.id);
+  if (!item) return;
+
+  try {
+    const src = await fileToThumbnail(file);
+    const previous = item.image;
+    item.image = src;
+    if (!save()) {
+      item.image = previous;
+      return;
+    }
+    renderAll();
+    toast('Thumbnail updated.');
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+/* ==========================================================
+   Rendering
+   ========================================================== */
+function thumbHTML(item, collection) {
+  const src = safeImage(item.image);
+  const inner = src
+    ? `<img src="${esc(src)}" alt="${esc(item.title)}">`
+    : `<span class="thumb-empty"><span aria-hidden="true">${SECTIONS[collection].emoji}</span><small>Add a photo</small></span>`;
+  return `<button class="thumb" type="button" data-action="change-image" aria-label="Change thumbnail for ${esc(item.title)}">${inner}<span class="thumb-edit">Change photo</span></button>`;
+}
+
+function chip(text, tone = '') {
+  return text ? `<span class="chip ${tone}">${esc(text)}</span>` : '';
+}
+
+function linkHTML(url, label) {
+  const href = safeUrl(url);
+  return href ? `<a class="card-link" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${label}</a>` : '';
+}
+
+function emptyHTML(collection, filtered) {
+  const section = SECTIONS[collection];
+  const title = filtered ? 'Nothing matches this filter' : section.emptyTitle;
+  const text = filtered ? 'Try another filter or add a new piece.' : section.emptyText;
+  return `<div class="empty"><span class="empty-icon" aria-hidden="true">${section.emoji}</span><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`;
+}
+
+function mountGrid(collection, items, cardFn, filtered = false) {
+  const grid = $(`#${collection}Grid`);
+  grid.innerHTML = items.length ? items.map(cardFn).join('') : emptyHTML(collection, filtered);
+}
+
+/* Travels */
+function stopsHTML(trip) {
+  const list = trip.stops.map(stop => `
+    <li>
+      <label class="check">
+        <input type="checkbox" data-action="toggle-stop" data-stop="${esc(stop.id)}" ${stop.done ? 'checked' : ''}>
+        <span>${esc(stop.text)}</span>
+      </label>
+      <button class="icon-btn" type="button" data-action="remove-stop" data-stop="${esc(stop.id)}" aria-label="Remove stop ${esc(stop.text)}">×</button>
+    </li>`).join('');
+
+  return `
+    <ul class="stops">${list}</ul>
+    <form class="stop-form" novalidate>
+      <input name="stop" maxlength="80" placeholder="Add a stop" aria-label="New stop for ${esc(trip.title)}">
+      <button class="btn btn-small btn-primary" type="submit">Add</button>
+    </form>`;
+}
+
+function travelCard(trip) {
+  const total = trip.stops.length;
+  const done = trip.stops.filter(stop => stop.done).length;
+  const percent = total ? Math.round((done / total) * 100) : 0;
+  const open = ui.expanded.has(trip.id);
+  const label = total ? `${done} of ${total} stops ticked off` : 'No stops yet';
+
+  return `
+    <article class="card" data-collection="travels" data-id="${esc(trip.id)}">
+      ${thumbHTML(trip, 'travels')}
+      <div class="card-body">
+        <h3>${esc(trip.title)}</h3>
+        <div class="chips">${chip(trip.destination, 'chip-lilac')}${chip(trip.dates, 'chip-peach')}</div>
+        ${trip.notes ? `<p class="notes">${esc(trip.notes)}</p>` : ''}
+        <div class="progress" role="progressbar" aria-label="Trip progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}" style="--pct:${percent}%"><span></span></div>
+        <p class="progress-label">${label}</p>
+        <div><button class="link-btn" type="button" data-action="toggle-stops" aria-expanded="${open}">${open ? 'Hide stops' : 'Show stops'}</button></div>
+        ${open ? stopsHTML(trip) : ''}
+      </div>
+      <div class="card-actions"><button class="link-btn" type="button" data-action="remove">Remove</button></div>
+    </article>`;
+}
+
+/* Closet */
+function closetCard(item) {
+  return `
+    <article class="card" data-collection="closet" data-id="${esc(item.id)}">
+      ${thumbHTML(item, 'closet')}
+      <button class="fav" type="button" data-action="fav" aria-pressed="${Boolean(item.fav)}" aria-label="Favourite ${esc(item.title)}">${item.fav ? '💖' : '🤍'}</button>
+      <div class="card-body">
+        <h3>${esc(item.title)}</h3>
+        <div class="chips">${chip(item.category, 'chip-rose')}${chip(item.color, 'chip-lilac')}</div>
+        ${item.notes ? `<p class="notes">${esc(item.notes)}</p>` : ''}
+      </div>
+      <div class="card-actions"><button class="link-btn" type="button" data-action="remove">Remove</button></div>
+    </article>`;
+}
+
+function renderClosetFilters() {
+  const filters = ['All', 'Favorites', ...OPTIONS.closet];
+  $('#closetFilters').innerHTML = filters.map(name =>
+    `<button class="chip-btn" type="button" data-action="filter" data-value="${esc(name)}" aria-pressed="${name === ui.closetFilter}">${name === 'Favorites' ? '💖 Favourites' : esc(name)}</button>`
+  ).join('');
+}
+
+function renderCloset() {
+  const filter = ui.closetFilter;
+  const items = data.closet.filter(item => {
+    if (filter === 'All') return true;
+    if (filter === 'Favorites') return item.fav;
+    return item.category === filter;
+  });
+  renderClosetFilters();
+  mountGrid('closet', items, closetCard, filter !== 'All' && data.closet.length > 0);
+}
+
+/* Shops */
+function shopCard(shop) {
+  return `
+    <article class="card" data-collection="shops" data-id="${esc(shop.id)}">
+      ${thumbHTML(shop, 'shops')}
+      <div class="card-body">
+        <h3>${esc(shop.title)}</h3>
+        <div class="chips">${chip(shop.category, 'chip-mint')}</div>
+        ${shop.notes ? `<p class="notes">${esc(shop.notes)}</p>` : ''}
+        ${linkHTML(shop.link, 'Visit shop')}
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-small btn-ghost" type="button" data-action="to-wishlist">Save to wishlist</button>
+        <button class="link-btn" type="button" data-action="remove">Remove</button>
+      </div>
+    </article>`;
+}
+
+/* Wishlist */
+function wishCard(wish) {
+  const tone = wish.priority === 'Dream' ? 'chip-rose' : wish.priority === 'Soon' ? 'chip-mint' : 'chip-lilac';
+  return `
+    <article class="card ${wish.bought ? 'is-done' : ''}" data-collection="wishlist" data-id="${esc(wish.id)}">
+      ${thumbHTML(wish, 'wishlist')}
+      <div class="card-body">
+        <h3>${esc(wish.title)}</h3>
+        <div class="chips">${chip(wish.price, 'chip-peach')}${chip(wish.priority, tone)}${wish.bought ? chip('Got it', 'chip-mint') : ''}</div>
+        ${wish.notes ? `<p class="notes">${esc(wish.notes)}</p>` : ''}
+        ${linkHTML(wish.link, 'View item')}
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-small btn-ghost" type="button" data-action="got-it" aria-pressed="${Boolean(wish.bought)}">${wish.bought ? 'Put back' : 'Mark as got it'}</button>
+        <button class="link-btn" type="button" data-action="remove">Remove</button>
+      </div>
+    </article>`;
+}
+
+function updateWishlistMeta() {
+  const open = data.wishlist.filter(wish => !wish.bought).length;
+  const got = data.wishlist.length - open;
+  const badge = $('#wishlistBadge');
+  badge.textContent = open;
+  badge.hidden = open === 0;
+
+  const summary = $('#wishlistSummary');
+  if (!data.wishlist.length) {
+    summary.textContent = 'Everything you’re hoping to get.';
+  } else {
+    summary.textContent = `${open} still to get, ${got} already yours.`;
+  }
+}
+
+function renderAll() {
+  mountGrid('travels', data.travels, travelCard);
+  renderCloset();
+  mountGrid('shops', data.shops, shopCard);
+  mountGrid('wishlist', data.wishlist, wishCard);
+  updateWishlistMeta();
+}
+
+/* ==========================================================
+   Add forms
+   ========================================================== */
+function populateSelects() {
+  $$('select[data-options]').forEach(select => {
+    const list = OPTIONS[select.dataset.options] || [];
+    select.innerHTML = list.map(option => `<option value="${esc(option)}">${esc(option)}</option>`).join('');
+  });
+}
+
+function toggleForm(name) {
+  const wrap = $(`#${name}FormWrap`);
+  const button = $(`[data-toggle-form="${name}"]`);
+  const open = !wrap.classList.contains('is-open');
+  wrap.classList.toggle('is-open', open);
+  button.setAttribute('aria-expanded', String(open));
+  if (open) {
+    const first = $('input[name="title"]', wrap);
+    setTimeout(() => first && first.focus(), 380);
+  }
+}
+
+function resetFormState(form) {
+  const collection = form.dataset.collection;
+  ui.pendingImages[collection] = '';
+  setDropzonePreview($('.dropzone', form), '');
+  $('.form-error', form).textContent = '';
+}
+
+function buildItem(collection, formData) {
+  const text = key => String(formData.get(key) || '').trim();
+  const base = {
+    id: uid(),
+    title: text('title'),
+    notes: text('notes'),
+    image: ui.pendingImages[collection] || '',
+    created: Date.now()
+  };
+
+  switch (collection) {
+    case 'travels':
+      return { ...base, destination: text('destination'), dates: text('dates'), stops: [] };
+    case 'closet':
+      return { ...base, category: text('category'), color: text('color'), fav: false };
+    case 'shops':
+      return { ...base, category: text('category'), link: safeUrl(text('link')) };
+    case 'wishlist':
+      return { ...base, price: text('price'), priority: text('priority'), link: safeUrl(text('link')), bought: false };
+    default:
+      return base;
+  }
+}
+
+function validateItem(collection, item, formData) {
+  if (!item.title) return 'Give it a name first.';
+  if (collection === 'travels' && !item.destination) return 'Add a destination for this trip.';
+  if ((collection === 'shops' || collection === 'wishlist') && String(formData.get('link') || '').trim() && !item.link) {
+    return 'That link doesn’t look right. Try something like example.com.';
+  }
+  return '';
+}
+
+function handleAddForm(form) {
+  const collection = form.dataset.collection;
+  const formData = new FormData(form);
+  const item = buildItem(collection, formData);
+  const problem = validateItem(collection, item, formData);
+  const errorEl = $('.form-error', form);
+
+  if (problem) {
+    errorEl.textContent = problem;
+    return;
+  }
+
+  data[collection].unshift(item);
+  if (!save()) {
+    data[collection].shift();
+    return;
+  }
+
+  form.reset();
+  resetFormState(form);
+  if (collection === 'closet') ui.closetFilter = 'All';
+  renderAll();
+  toast('Saved. Sparkle on ✨');
+
+  const button = $(`[data-toggle-form="${collection}"]`);
+  const rect = button.getBoundingClientRect();
+  spawnDust(rect.left + rect.width / 2, rect.top + rect.height / 2, 24, 7);
+}
+
+function handleStopForm(form) {
+  const card = form.closest('.card');
+  const trip = data.travels.find(entry => entry.id === card.dataset.id);
+  const input = $('input[name="stop"]', form);
+  const text = input.value.trim();
+  if (!trip || !text) {
+    input.focus();
+    return;
+  }
+  if (trip.stops.length >= MAX_STOPS) {
+    toast(`A trip can have up to ${MAX_STOPS} stops.`);
+    return;
+  }
+  trip.stops.push({ id: uid(), text, done: false });
+  if (!save()) {
+    trip.stops.pop();
+    return;
+  }
+  renderAll();
+  const nextInput = $(`.card[data-id="${trip.id}"] .stop-form input`);
+  if (nextInput) nextInput.focus();
+}
+
+/* ==========================================================
+   Card actions (event delegation)
+   ========================================================== */
+function handleAction(el) {
+  const action = el.dataset.action;
+  const card = el.closest('.card');
+  const collection = card ? card.dataset.collection : '';
+  const item = card ? data[collection].find(entry => entry.id === card.dataset.id) : null;
+
+  switch (action) {
+    case 'filter':
+      ui.closetFilter = el.dataset.value;
+      renderCloset();
+      break;
+
+    case 'change-image':
+      if (!item) return;
+      ui.imageTarget = { collection, id: item.id };
+      $('#cardImageInput').click();
+      break;
+
+    case 'remove': {
+      if (!item) return;
+      if (!window.confirm(`Remove “${item.title}”?`)) return;
+      data[collection] = data[collection].filter(entry => entry.id !== item.id);
+      ui.expanded.delete(item.id);
+      if (save()) {
+        renderAll();
+        toast('Removed.');
+      }
+      break;
+    }
+
+    case 'toggle-stops':
+      if (!item) return;
+      if (ui.expanded.has(item.id)) ui.expanded.delete(item.id);
+      else ui.expanded.add(item.id);
+      renderAll();
+      break;
+
+    case 'toggle-stop': {
+      const stop = item && item.stops.find(entry => entry.id === el.dataset.stop);
+      if (!stop) return;
+      stop.done = el.checked;
+      save();
+      renderAll();
+      if (stop.done && item.stops.every(entry => entry.done)) {
+        const rect = card.getBoundingClientRect();
+        spawnDust(rect.left + rect.width / 2, rect.top + 80, 40, 9);
+        toast('Every stop ticked off. What a trip!');
+      }
+      break;
+    }
+
+    case 'remove-stop':
+      if (!item) return;
+      item.stops = item.stops.filter(entry => entry.id !== el.dataset.stop);
+      save();
+      renderAll();
+      break;
+
+    case 'fav':
+      if (!item) return;
+      item.fav = !item.fav;
+      save();
+      renderAll();
+      break;
+
+    case 'to-wishlist': {
+      if (!item) return;
+      if (data.wishlist.some(wish => wish.sourceId === item.id)) {
+        toast('Already on your wishlist.');
+        return;
+      }
+      data.wishlist.unshift({
+        id: uid(), title: item.title, price: '', priority: 'Soon', link: item.link || '',
+        notes: item.notes || '', image: item.image || '', bought: false, sourceId: item.id, created: Date.now()
+      });
+      if (!save()) {
+        data.wishlist.shift();
+        return;
+      }
+      renderAll();
+      toast(`${item.title} is on your wishlist.`);
+      break;
+    }
+
+    case 'got-it': {
+      if (!item) return;
+      item.bought = !item.bought;
+      save();
+      const rect = el.getBoundingClientRect();
+      renderAll();
+      if (item.bought) spawnDust(rect.left + rect.width / 2, rect.top, 36, 9);
+      break;
+    }
+
+    default:
+      break;
+  }
+}
+
+/* ==========================================================
+   Events
+   ========================================================== */
+function bindEvents() {
+  loginForm.addEventListener('submit', event => {
+    event.preventDefault();
+    handleLogin();
+  });
+  $('#togglePassword').addEventListener('click', togglePassword);
+  $('#logoutButton').addEventListener('click', logout);
+
+  $$('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
+  $('.tabs').addEventListener('keydown', handleTabKeys);
+
+  $$('[data-toggle-form]').forEach(button => {
+    button.addEventListener('click', () => toggleForm(button.dataset.toggleForm));
+  });
+
+  $$('.add-form').forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      handleAddForm(form);
+    });
+    form.addEventListener('reset', () => resetFormState(form));
+
+    const zone = $('.dropzone', form);
+    $('.dropzone-input', zone).addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (file) handleFormImage(zone, file);
+      event.target.value = '';
+    });
+
+    ['dragenter', 'dragover'].forEach(type => zone.addEventListener(type, event => {
+      event.preventDefault();
+      zone.classList.add('is-drag');
+    }));
+    ['dragleave', 'drop'].forEach(type => zone.addEventListener(type, event => {
+      event.preventDefault();
+      zone.classList.remove('is-drag');
+    }));
+    zone.addEventListener('drop', event => {
+      const file = event.dataTransfer && event.dataTransfer.files[0];
+      if (file) handleFormImage(zone, file);
+    });
+  });
+
+  $('#cardImageInput').addEventListener('change', event => {
+    const file = event.target.files[0];
+    if (file) handleCardImage(file);
+    else ui.imageTarget = null;
+    event.target.value = '';
+  });
+
+  document.addEventListener('click', event => {
+    const el = event.target.closest('[data-action]');
+    if (el) handleAction(el);
+
+    const button = event.target.closest('.btn');
+    if (button && !event.target.closest('#loginForm')) {
+      spawnDust(event.clientX, event.clientY, 8, 5);
+    }
+  });
+
+  document.addEventListener('submit', event => {
+    const form = event.target;
+    if (form.matches('.stop-form')) {
+      event.preventDefault();
+      handleStopForm(form);
+    }
+  });
+
+  $('#resetData').addEventListener('click', () => {
+    if (!window.confirm('Replace everything with the sample data? Your own entries will be removed.')) return;
+    data = seedData();
+    ui.expanded.clear();
+    ui.closetFilter = 'All';
+    if (save()) {
+      renderAll();
+      toast('Sample data restored.');
+    }
+  });
+}
+
+/* ==========================================================
+   Start
+   ========================================================== */
+function init() {
+  populateSelects();
+  bindDust();
+  bindEvents();
+
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    enterApp();
+  } else {
+    $('#username').focus();
+  }
+}
+
+init();
+
+</script>
+</body>
+</html>
 
